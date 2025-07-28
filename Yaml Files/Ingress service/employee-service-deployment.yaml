@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee-service-mysql
+spec:
+  selector:
+    matchLabels:
+      app: employee-service-mysql
+  replicas: 4
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: employee-service-mysql
+    spec:
+      containers:
+        - name: employee-service
+          image: parmodhchawla/employeeservice:0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9000
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: host
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: dbName
+            - name: DB_USERNAME
+              value: root
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: password
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: employee-service-mysql
+spec:
+  selector:
+    app: employee-service-mysql
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+  type: ClusterIP  # Changed from LoadBalancer to ClusterIP
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: employee-service-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: employee.example.com  # Change to your domain or use nip.io for testing
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: employee-service-mysql
+                port:
+                  number: 9000
