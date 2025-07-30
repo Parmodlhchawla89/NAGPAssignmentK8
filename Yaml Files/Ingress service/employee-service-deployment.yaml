@@ -64,7 +64,7 @@ kind: Ingress
 metadata:
   name: employee-service-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /employees
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
     - host: employee.example.com  # Change to your domain or use nip.io for testing
