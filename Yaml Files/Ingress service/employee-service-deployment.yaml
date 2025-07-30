@@ -64,13 +64,13 @@ kind: Ingress
 metadata:
   name: employee-service-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /employees
 spec:
   rules:
     - host: employee.example.com  # Change to your domain or use nip.io for testing
       http:
         paths:
-          - path: /
+          - path: /employees
             pathType: Prefix
             backend:
               service:
