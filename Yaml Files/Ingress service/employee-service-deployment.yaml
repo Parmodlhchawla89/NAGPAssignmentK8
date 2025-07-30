@@ -63,11 +63,13 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: employee-service-ingress
+  annotations:
+  nginx.ingress.kubernetes.io/rewrite-target: /employees
 spec:
   rules:
     - http:
         paths:
-          - path: /employees
+          - path: /employees1
             pathType: Prefix
             backend:
               service:
