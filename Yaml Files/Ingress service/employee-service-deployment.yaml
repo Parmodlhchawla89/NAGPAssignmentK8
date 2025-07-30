@@ -3,15 +3,15 @@ kind: Deployment
 metadata:
   name: employee-service-mysql
 spec:
-  selector:
-    matchLabels:
-      app: employee-service-mysql
   replicas: 4
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: employee-service-mysql
   template:
     metadata:
       labels:
@@ -55,7 +55,7 @@ spec:
     - protocol: TCP
       port: 9000
       targetPort: 9000
-  type: ClusterIP  # Changed from LoadBalancer to ClusterIP
+  type: ClusterIP
 
 ---
 
@@ -64,8 +64,9 @@ kind: Ingress
 metadata:
   name: employee-service-ingress
   annotations:
-  nginx.ingress.kubernetes.io/rewrite-target: /employees
+    nginx.ingress.kubernetes.io/rewrite-target: /employees
 spec:
+  ingressClassName: nginx
   rules:
     - http:
         paths:
