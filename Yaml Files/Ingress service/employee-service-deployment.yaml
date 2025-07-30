@@ -67,7 +67,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: employee.example.com  # Change to your domain or use nip.io for testing
+    - host: 34.107.129.30.nip.io
       http:
         paths:
           - path: /employees
