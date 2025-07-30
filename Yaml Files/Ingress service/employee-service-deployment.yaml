@@ -64,13 +64,13 @@ kind: Ingress
 metadata:
   name: employee-service-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /employees
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
-          - path: /employees1
+          - path: /employees
             pathType: Prefix
             backend:
               service:
