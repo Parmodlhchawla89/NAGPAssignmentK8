@@ -67,7 +67,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-      http:
+    - http:
         paths:
           - path: /employees
             pathType: Prefix
