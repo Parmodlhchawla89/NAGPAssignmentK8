@@ -1,75 +1,9 @@
-# Define a 'Persistent Voulume Claim'(PVC) for Mysql Storage, dynamically provisioned by cluster
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql-pv-claim
-  labels:
-    app: mysql
-    tier: database
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 100Mi
 ---
-# Configure 'Deployment' of mysql server
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mysql
-  labels:
-    app: mysql
-    tier: database
-spec:
-  selector:
-    matchLabels:
-      app: mysql
-      tier: database
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: mysql
-        tier: database
-    spec:
-      containers:
-        - image: mysql:5.7
-          args:
-            - "--ignore-db-dir=lost+found" # Workaround for https://github.com/docker-library/mysql/issues/186
-          name: mysql
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom :
-                secretKeyRef :
-                  name : mysql-secrets
-                  key :  password
-
-            - name: MYSQL_DATABASE
-              valueFrom :
-                configMapKeyRef :
-                  name : db-config
-                  key :  dbName
-
-
-          ports:
-            - containerPort: 3306
-              name: mysql
-          volumeMounts:
-            - name: mysql-persistent-storage
-              mountPath: /var/lib/mysql
-      volumes:
-        - name: mysql-persistent-storage
-          persistentVolumeClaim:
-            claimName: mysql-pv-claim
-
----
-# Define a 'Service' To Expose mysql to Other Services
+# Headless Service for stable DNS and network identity
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql  # DNS name
+  name: mysql
   labels:
     app: mysql
     tier: database
@@ -77,7 +11,61 @@ spec:
   ports:
     - port: 3306
       targetPort: 3306
+  clusterIP: None
   selector:
     app: mysql
     tier: database
-  clusterIP: None
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+    tier: database
+spec:
+  serviceName: mysql  
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+      tier: database
+  template:
+    metadata:
+      labels:
+        app: mysql
+        tier: database
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:5.7
+          args:
+            - "--ignore-db-dir=lost+found"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: dbName
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-storage
+        labels:
+          app: mysql
+          tier: database
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 100Mi
