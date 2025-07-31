@@ -23,12 +23,12 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 9000
-             resources:
+          resources:
             requests:
-              memory: "128Mi"    # ⬅️ Conservative memory request
-              cpu: "100m"        # ⬅️ Low CPU request
+              memory: "128Mi"
+              cpu: "100m"
             limits:
-              memory: "256Mi"    # ⬅️ Limit, but not too high
+              memory: "256Mi"
               cpu: "200m"
           env:
             - name: DB_HOST
@@ -48,9 +48,7 @@ spec:
                 secretKeyRef:
                   name: mysql-secrets
                   key: password
-
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -63,9 +61,7 @@ spec:
       port: 9000
       targetPort: 9000
   type: ClusterIP
-
 ---
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
