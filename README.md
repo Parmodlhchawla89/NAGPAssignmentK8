@@ -26,7 +26,7 @@ Image:  parmodhchawla/employeeservice:0.0.1
       - kubectl get pods (This will print all the running pods, copy the mysql podname)
       - kubectl exec --stdin --tty #podname -- /bin/bash"  (Replace the podname with the actual mysql podname printed on the shell.)
       - mysql -h mysql -u root -p (This command will enable Mysql editor where we ccan write queries for DB)
-      - show databses (This command will print all the active databases)
+      - show databases (This command will print all the active databases)
       - use employee_db 
       - Run following command in mysql editor
       
