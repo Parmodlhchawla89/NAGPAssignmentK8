@@ -53,18 +53,19 @@ VALUES
 - The above command will create employee_details table and add entries to the table.
 
 ### 3. Deploy a microservice by running following commands:
+- kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/cloud/deploy.yaml - (This command will install ngress-NGINX controller as we will we using Ingress for explosing the our service to the externam world)
     - kubectl apply -f employee-service-deployment.yaml (This will deploy the microservice)
     - kubectl get po (Since we have used replica sets this will create 4 pods for microservice)
     - Once all the pods start running then run the following command:
-    - kubectl get services (This will print all the active services, the load balancer will print an external IP which will be used as a base url for the serivce)
+    - kubectl get Ingress (This will print an external IP which will be used as a base url for the serivce)
     - The port used for this application is 9000
     
 ### 4. To test the service:
-    - Get the external IP from the loadbalancer as mentioned the step 3
-    - Paste the IP url on the browser with port externalip/9000/employees
+    - Get the external IP from the Ingress as mentioned the step 3
+    - Paste the IP url on the browser with port externalip/employees
     
-    This will print the json as following:
-    [{"id":1,"employeeId":"3122222","name":"John","joiningDate":"2020-03-10","ogName":"Michael","designation":"Tech Lead","location":"US"},{"id":2,"employeeId":"312233","name":"Sharal","joiningDate":"2018-04-01","ogName":"Ian Harvey","designation":"Junior Lead","location":"US"},{"id":3,"employeeId":"2345678","name":"Douglas","joiningDate":"2019-07-02","ogName":"Cornelius","designation":"Sofrware Engineer","location":"India"},{"id":4,"employeeId":"1234321","name":"Shawn Marsh","joiningDate":"2023-02-03","ogName":"Shirley","designation":"Sr. Sofrware Engineer","location":"Dubai"},{"id":5,"employeeId":"122211","name":"Shane Watson","joiningDate":"2023-01-10","ogName":"James Foley","designation":"Consultant","location":"UK"}]
+    This will print the json as following array of all the Employees:
+    [{"id":1,"employeeId":"3122222","name":"John","joiningDate":"2025-03-10","ogName":"Michael","designation":"Tech Lead"},{"id":2,"employeeId":"312233","name":"Sharal","joiningDate":"2025-04-01","ogName":"Ian Harvey","designation":"Junior Lead"},{"id":3,"employeeId":"2345678","name":"Douglas","joiningDate":"2025-07-02","ogName":"Cornelius","designation":"Software Engineer"},{"id":4,"employeeId":"1234321","name":"Shawn Marsh","joiningDate":"2025-02-03","ogName":"Shirley","designation":"Sr. Software Engineer"},{"id":5,"employeeId":"122211","name":"Shane Watson","joiningDate":"2025-01-10","ogName":"James Foley","designation":"Consultant"}]
 
 ### 4. Persistance volume
 - To test the persistance of the DB
