@@ -23,6 +23,13 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 9000
+             resources:
+            requests:
+              memory: "128Mi"    # ⬅️ Conservative memory request
+              cpu: "100m"        # ⬅️ Low CPU request
+            limits:
+              memory: "256Mi"    # ⬅️ Limit, but not too high
+              cpu: "200m"
           env:
             - name: DB_HOST
               valueFrom:
